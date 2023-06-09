@@ -7,6 +7,7 @@
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   </head>
   <style>
+    <style>
     * {
       margin: 0;
       padding: 0;
@@ -65,20 +66,17 @@
       <input type="text" id="inputS" />
       <div id="box2"></div>
       <div id="box3">
-        <span style="margin-left: 20px">
-          <span id="fonss">0</span>未完成
-        </span>
-          <button>所有</button>
-          <button>未完成</button>
-          <button>已完成</button>
-          <button>清除完成项</button>
+        <span style="margin-left: 20px"><span id="fonss">0</span>未完成</span
+        ><button>所有</button><button>未完成</button><button>已完成</button
+        ><button>清除完成项</button>
       </div>
     </div>
   </body>
   <script>
     let n = 1;
     let arrList = [];
-  $(function () {
+
+    $(function () {
       $("#inputS").keydown(function (e) {
         if (e.keyCode == 13) {
           arrList.push({
@@ -86,15 +84,13 @@
             type: false,
             id: n++,
           });
-          localStorage.setItem("arrLists", JSON.stringify(arrList));
-          tmp = JSON.parse(localStorage.getItem("arrLists"));
-
-          let tmp = JSON.parse(localStorage.getItem("arrLists"));
-          fun(tmp);
+          fun(arrList);
           $("#fonss").html(arrList.length);
         }
       });
- $("#box2").on("click", "input", function (e) {
+
+      //2
+      $("#box2").on("click", "input", function (e) {
         let id = $(this).attr("data-id");
         arrList[id].type = true;
         if ($(this).prop("checked")) {
@@ -103,7 +99,7 @@
           $(this).parent().removeClass("noe");
         }
       });
-      
+      // quanx
       $("#box2").on("change", "input", function () {
         let i = 0;
         $("#box2 input").each(function () {
@@ -121,7 +117,7 @@
         }
         console.log(i);
       });
-   
+      //sa
       $("button")
         .eq(0)
         .click(function () {
@@ -140,7 +136,6 @@
         .click(function () {
           let arr = arrList.filter((item) => {
             return item.type == true;
-           
           });
           fun(arr);
         });
@@ -154,19 +149,14 @@
           fun(arr);
         });
     });
-    let tmp = JSON.parse(localStorage.getItem("arrLists"));
-    fun();
-    console.log(tmp);
-    function fun(n = tmp) {
+    function fun(n) {
       let html = "";
-   n.forEach((item, index) => {
-       html += `
-          <p><input type="checkbox" data-id="${index}" />${item.name}<b data-id="${index}">x</b></p>
-         `;
+      n.forEach((item, index) => {
+        html += `
+            <p><input type="checkbox" data-id="${index}" />${item.name}<b data-id="${index}">x</b></p>
+            `;
       });
       $("#box2").html(html);
-   }
-  
-    
+    }
   </script>
 </html>
