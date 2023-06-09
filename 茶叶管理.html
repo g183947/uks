@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      table {
+        width: 1500px;
+        margin: 0 auto;
+        text-align: center;
+      }
+      th,
+      td {
+        height: 50px;
+      }
+      div {
+        width: 300px;
+        padding: 20px;
+        border-radius: 11px;
+        text-align: center;
+        background-color: pink;
+        margin: 10px auto;
+      }
+      .noe {
+        display: none;
+      }
+      .noes {
+        display: block;
+      }
+      #tjBtn {
+        widows: 400px;
+        height: 40px;
+        margin: 50px;
+        margin-left: 900px;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="tjBtn">添加茶叶</button>
+    <table border="1" cellspacing="0">
+      <div class="noe" id="box">
+        <form action="" id="formS">
+          茶叶名称: <input type="text" name="name" id="nameS" /><br /><br />
+          茶叶类型: <input type="text" name="type" id="typeS" /><br /><br />
+          茶叶价格: <input type="text" name="price" id="priceS" /><br /><br />
+          茶叶库存: <input type="text" name="stock" id="stockS" /><br /><br />
+          茶叶描述:
+          <input type="text" name="description" id="descriptionS" /><br /><br />
+          <button id="btn">添加茶叶</button>
+        </form>
+      </div>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>茶叶名称</th>
+          <th>茶叶类型</th>
+          <th>茶叶价格</th>
+          <th>茶叶库存</th>
+          <th>茶叶描述</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </body>
+  <script>
+    let nameS = document.getElementById("nameS");
+    let tmp = true;
+    let: n1 = 0;
+    (function () {
+      tjBtn.addEventListener("click", function () {
+        tmp = true;
+        btn.innerHTML = "添加茶叶";
+        box.classList.add("noes");
+        nameS.value = "";
+        typeS.value = "";
+        priceS.value = "";
+        stockS.value = "";
+        descriptionS.value = "";
+      });
+      fun();
+    })();
+    //添加茶叶
+    formS.addEventListener("submit", function () {
+      event.preventDefault();
+      let data = new FormData(this);
+      if (tmp) {
+        fetch("https://liu.zzgoodqc.cn/teas", {
+          method: "POST",
+          body: data,
+        })
+          .then((res) => {
+            return res.json();
+          })
+          .then((item) => {
+            fun();
+          });
+        box.classList.remove("noes");
+      } else {
+        console.log(n1);
+
+        let tmp = {
+          id: n1,
+          name: nameS.value,
+          type: typeS.value,
+          price: priceS.value,
+          stock: stockS.value,
+          description: descriptionS.value,
+        };
+        console.log(tmp);
+        fetch("https://liu.zzgoodqc.cn/teas/" + n1, {
+          method: "put",
+          headers: {
+            "Content-Type": "application/json;",
+          },
+          body: JSON.stringify(tmp),
+        })
+          .then((res) => {
+            return res.json();
+          })
+          .then((item) => {
+            fun();
+          });
+        btn.innerHTML = "添加按钮";
+        box.classList.remove("noes");
+      }
+    });
+    //删除
+    tbody.addEventListener("click", function () {
+      let arr;
+      let index = event.target.dataset.index;
+      if (
+        event.target.tagName == "BUTTON" &&
+        event.target.innerHTML == "删除"
+      ) {
+        fetch("https://liu.zzgoodqc.cn/teas/" + index, {
+          method: "DELETE",
+        }).then((item) => {
+          console.log(item);
+          let data = {};
+          fun();
+        });
+      }
+      if (
+        event.target.tagName == "BUTTON" &&
+        event.target.innerHTML == "查看"
+      ) {
+        box.classList.add("noes");
+        fetch("https://liu.zzgoodqc.cn/teas/" + index)
+          .then((res) => {
+            return res.json();
+          })
+          .then((item) => {
+            console.log(item);
+            nameS.value = item.data.name;
+            typeS.value = item.data.type;
+            priceS.value = item.data.price;
+            stockS.value = item.data.stock;
+            descriptionS.value = item.data.description;
+
+            fun();
+          });
+      }
+      if (
+        event.target.tagName == "BUTTON" &&
+        event.target.innerHTML == "修改"
+      ) {
+        btn.innerHTML = "修改";
+        box.classList.add("noes");
+        tmp = false;
+        n1 = index;
+        fetch("https://liu.zzgoodqc.cn/teas/" + index)
+          .then((res) => {
+            return res.json();
+          })
+          .then((item) => {
+            console.log(item);
+            nameS.value = item.data.name;
+            typeS.value = item.data.type;
+            priceS.value = item.data.price;
+            stockS.value = item.data.stock;
+            descriptionS.value = item.data.description;
+
+            fun();
+          });
+      }
+    });
+    //茶叶列表
+    function fun() {
+      fetch("https://liu.zzgoodqc.cn/teas")
+        .then((res) => {
+          return res.json();
+        })
+        .then((item) => {
+          listFun(item.data);
+        });
+    }
+    function listFun(n) {
+      let html = "";
+      n = n.sort((a, b) => {
+        return b.id - a.id;
+      });
+      n.forEach((item, index) => {
+        html += `
+             <tr>
+            <td>${item.id}</td>
+            <td>${item.name}</td>
+            <td>${item.type}</td>
+            <td>${item.price}</td>
+            <td>${item.stock}</td>
+            <td>${item.description}</td>
+            <td>
+            <button data-index="${item.id}">查看</button>
+            <button data-index="${item.id}">修改</button>
+            <button data-index="${item.id}">删除</button>
+            </td>
+        </tr>
+            `;
+      });
+      tbody.innerHTML = html;
+    }
+  </script>
+</html>
